@@ -1,14 +1,10 @@
 package ru.javawebinar.topjava.jmh;
 
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
-import org.openjdk.jmh.runner.options.Options;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.util.UserMealsUtil;
 
-import javax.swing.text.Utilities;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -62,8 +58,13 @@ public class FilterUserMealBenchmark {
     }
 
     @Benchmark
-    public void filteredByOneStream() {
-        UserMealsUtil.filteredByOneStream(DATA__FOR__TESTING, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
+    public void filteredByOneStreamOnMyCollector() {
+        UserMealsUtil.filteredByOneStreamOnMyCollector(DATA__FOR__TESTING, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
+    }
+
+    @Benchmark
+    public void filteredByOneStreamOnCollectors() {
+        UserMealsUtil.filteredByOneStreamOnCollectors(DATA__FOR__TESTING, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
     }
 
     @Benchmark
@@ -95,7 +96,15 @@ public class FilterUserMealBenchmark {
     }
 }
 
-// Benchmark                                             (N)  Mode  Cnt  Score   Error  Units
+// Benchmark  on 01/02/2021                                   (N)  Mode  Cnt  Score   Error  Units
+//FilterUserMealBenchmark.filteredByCycles                  1000  avgt   10  0,238 ± 0,023  ms/op
+//FilterUserMealBenchmark.filteredByOneCycleOnLambda        1000  avgt   10  0,324 ± 0,127  ms/op
+//FilterUserMealBenchmark.filteredByOneCycleOnThreads       1000  avgt   10  1,962 ± 0,150  ms/op
+//FilterUserMealBenchmark.filteredByOneStreamOnCollectors   1000  avgt   10  0,473 ± 0,091  ms/op
+//FilterUserMealBenchmark.filteredByOneStreamOnMyCollector  1000  avgt   10  0,260 ± 0,031  ms/op
+//FilterUserMealBenchmark.filteredByStreams                 1000  avgt   10  0,258 ± 0,010  ms/op
+
+// Benchmark  on 27/01/2021                             (N)  Mode  Cnt  Score   Error  Units
 //FilterUserMealBenchmark.filteredByCycles             1000  avgt   10  0,246 ± 0,019  ms/op
 //FilterUserMealBenchmark.filteredByOneCycleOnLambda   1000  avgt   10  0,259 ± 0,007  ms/op
 //FilterUserMealBenchmark.filteredByOneCycleOnThreads  1000  avgt   10  2,003 ± 0,155  ms/op
