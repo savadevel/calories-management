@@ -1,6 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
-
 <html lang="ru">
 <style>
     table, th, td {
@@ -27,6 +26,9 @@
 <h3><a href="index.html">Home</a></h3>
 <hr>
 <h2>Meals</h2>
+<hr>
+<a href="meal?action=EDIT_CREATE">Add Meal</a>
+<hr>
 <table>
     <tr>
         <th>Date</th>
@@ -38,12 +40,12 @@
     <jsp:useBean id="meals" scope="request" type="java.util.List<ru.javawebinar.topjava.model.MealTo>"/>
     <jsp:useBean id="dateTimeFormatter" scope="request" type="java.time.format.DateTimeFormatter"/>
     <c:forEach var="meal" items="${meals}">
-        <tr class="<c:out value="${meal.excess? 'excess' : 'without_excess'}"/>">
-            <td><c:out value="${meal.dateTime.format(dateTimeFormatter)}"/></td>
-            <td><c:out value="${meal.description}"/></td>
-            <td><c:out value="${meal.calories}"/></td>
-            <td></td>
-            <td></td>
+        <tr class="${meal.excess? 'excess' : 'without_excess'}">
+            <td>${meal.dateTime.format(dateTimeFormatter)}</td>
+            <td>${meal.description}</td>
+            <td>${meal.calories}</td>
+            <td><a href="meal?action=EDIT_UPDATE&id=${meal.id}">Update</a></td>
+            <td><a href="meals?action=DELETE&id=${meal.id}">Delete</a></td>
         </tr>
     </c:forEach>
 </table>
