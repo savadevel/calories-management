@@ -8,49 +8,35 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MealsInMemoryRepository implements RepositoryCrud<Meal> {
-    private static final AtomicInteger nextId = new AtomicInteger(1);
-    private static MealsInMemoryRepository instance = null;
-    private final Map<Integer, Meal> mealsPerDay = new ConcurrentHashMap<>();
+    private final AtomicInteger nextId = new AtomicInteger(1);
+    private final Map<Integer, Meal> storeOfMeals = new ConcurrentHashMap<>();
 
-    public static MealsInMemoryRepository getInstance() {
-        if (instance == null) {
-            synchronized (MealsInMemoryRepository.class) {
-                if (instance == null) {
-                    instance = new MealsInMemoryRepository();
-                }
-            }
-        }
-        return instance;
-    }
-
-    private MealsInMemoryRepository() {
-        MealsUtil.meals.forEach(this::create);
+    public MealsInMemoryRepository() {
+        MealsUtil.meals.forEach(this::save);
     }
 
     @Override
     public List<Meal> getAll() {
-        return new ArrayList<>(mealsPerDay.values());
+        return new ArrayList<>(storeOfMeals.values());
     }
 
     @Override
-    public Meal getById(int id) throws IllegalArgumentException {
-        return Optional.ofNullable(mealsPerDay.get(id)).orElseThrow(() -> new IllegalArgumentException("Meal not found with id=" + id));
+    public Meal getById(int id) {
+        return storeOfMeals.get(id);
     }
 
     @Override
-    public Meal create(Meal meal) throws IllegalArgumentException {
-        Meal result = new Meal(nextId.getAndIncrement(), meal.getDateTime(), meal.getDescription(), meal.getCalories());
-        mealsPerDay.put(result.getId(), result);
-        return result;
-    }
-
-    @Override
-    public void update(Meal meal) throws IllegalArgumentException {
-        mealsPerDay.put(meal.getId(), meal);
+    public Meal save(Meal meal)  {
+        if (meal.getId() == 0) {
+            Meal result = new Meal(nextId.getAndIncrement(), meal.getDateTime(), meal.getDescription(), meal.getCalories());
+            storeOfMeals.put(result.getId(), result);
+            return result;
+        }
+        return storeOfMeals.put(meal.getId(), meal);
     }
 
     @Override
     public void delete(int id) throws IllegalArgumentException {
-        mealsPerDay.remove(id);
+        storeOfMeals.remove(id);
     }
 }
