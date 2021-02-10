@@ -16,23 +16,23 @@ public class MealsInMemoryRepository implements RepositoryCrud<Meal> {
     }
 
     @Override
-    public List<Meal> getAll() {
+    public synchronized List<Meal> getAll() {
         return new ArrayList<>(storeOfMeals.values());
     }
 
     @Override
-    public Meal getById(int id) {
+    public synchronized Meal getById(int id) {
         return storeOfMeals.get(id);
     }
 
     @Override
-    public Meal save(Meal meal)  {
+    public synchronized Meal save(Meal meal)  {
         if (meal.getId() == 0) {
             Meal result = new Meal(nextId.getAndIncrement(), meal.getDateTime(), meal.getDescription(), meal.getCalories());
             storeOfMeals.put(result.getId(), result);
             return result;
         }
-        return storeOfMeals.put(meal.getId(), meal);
+        return storeOfMeals.computeIfPresent(meal.getId(), (k, v) -> meal);
     }
 
     @Override

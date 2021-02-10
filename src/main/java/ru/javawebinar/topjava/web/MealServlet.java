@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.stream.Stream;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -105,9 +106,7 @@ public class MealServlet extends HttpServlet {
 
     private void onCreate(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.debug("request create meal (dateTime={}, description={}, calories={})",
-                request.getParameter("dateTime"),
-                request.getParameter("description"),
-                request.getParameter("calories"));
+                Stream.of("dateTime", "description", "calories").map(request::getParameter).toArray(Object[]::new));
         Meal meal = repositoryOfMeals.save(getMealByAction(ActionWithEntity.CREATE, request));
         log.debug("created meal (id={})", meal.getId());
         response.sendRedirect(SERVLET_OF_MEALS);
@@ -115,22 +114,17 @@ public class MealServlet extends HttpServlet {
 
     private void onUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.debug("request update meal (id={}, dateTime={}, description={}, calories={})",
-                request.getParameter("id"),
-                request.getParameter("dateTime"),
-                request.getParameter("description"),
-                request.getParameter("calories"));
-        repositoryOfMeals.save(getMealByAction(ActionWithEntity.UPDATE, request));
+                Stream.of("id", "dateTime", "description", "calories").map(request::getParameter).toArray(Object[]::new));
+        if (null == repositoryOfMeals.save(getMealByAction(ActionWithEntity.UPDATE, request))) {
+            log.error("can't update meal, unknown id={}", request.getParameter("id"));
+        }
         response.sendRedirect(SERVLET_OF_MEALS);
-    }
-
-    private int getIdMeal(HttpServletRequest request) {
-        return request.getParameter("id") == null ? 0 : Integer.parseInt(request.getParameter("id"));
     }
 
     private ActionWithEntity getAction(HttpServletRequest request) {
         return request.getParameter("action") == null ?
                 ActionWithEntity.LIST :
-                ActionWithEntity.valueOf(request.getParameter("action"));
+                ActionWithEntity.valueOf(request.getParameter("action").toUpperCase());
     }
 
     private Meal getMealByAction(ActionWithEntity action, HttpServletRequest request) {
@@ -139,5 +133,9 @@ public class MealServlet extends HttpServlet {
                 LocalDateTime.parse(request.getParameter("dateTime"), TimeUtil.DATE_TIME_FORMATTER_FOR_MEAL),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
+    }
+
+    private int getIdMeal(HttpServletRequest request) {
+        return request.getParameter("id") == null ? 0 : Integer.parseInt(request.getParameter("id"));
     }
 }
