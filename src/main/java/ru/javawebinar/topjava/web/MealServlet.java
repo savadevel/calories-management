@@ -84,7 +84,7 @@ public class MealServlet extends HttpServlet {
                                 getDate("startDate", LocalDate.MIN, request),
                                 getDate("endDate", LocalDate.MAX, request),
                                 getTime("startTime", LocalTime.MIN, request),
-                                getTime("enTime", LocalTime.MAX, request)));
+                                getTime("endTime", LocalTime.MAX, request)));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
@@ -97,11 +97,11 @@ public class MealServlet extends HttpServlet {
 
     private LocalDate getDate(String from, LocalDate def, HttpServletRequest request) {
         String date = request.getParameter(from);
-        return date == null ? def : LocalDate.parse(request.getParameter(from));
+        return date == null || date.isEmpty() ? def : LocalDate.parse(request.getParameter(from));
     }
 
     private LocalTime getTime(String from, LocalTime def, HttpServletRequest request) {
-        String date = request.getParameter(from);
-        return date == null ? def : LocalTime.parse(request.getParameter(from));
+        String time = request.getParameter(from);
+        return time == null || time.isEmpty() ? def : LocalTime.parse(request.getParameter(from));
     }
 }
