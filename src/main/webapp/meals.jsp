@@ -24,6 +24,7 @@
     <a href="meals?action=create">Add Meal</a>
     <br><br>
     <form action="meals">
+        <input type="hidden" name="action" value="filter">
         <table>
             <tr>
                 <td><label for="startDate">From date (inclusive):</label></td>
