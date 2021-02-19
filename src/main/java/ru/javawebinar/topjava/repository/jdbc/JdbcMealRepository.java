@@ -35,7 +35,8 @@ public class JdbcMealRepository implements MealRepository {
                     .addValue("calories", meal.getCalories())
                     .addValue("user_id", userId);
             meal.setId(insertMeal.executeAndReturnKey(map).intValue());
-        } else if (jdbcTemplate.update("UPDATE meals SET datetime=?, description=?, calories=? WHERE id=?", meal.getDateTime(), meal.getDescription(), meal.getCalories(), meal.getId()) == 0) {
+        } else if (jdbcTemplate.update("UPDATE meals SET datetime=?, description=?, calories=? WHERE id=? and user_id=?",
+                meal.getDateTime(), meal.getDescription(), meal.getCalories(), meal.getId(), userId) == 0) {
             return null;
         }
         return meal;
@@ -43,12 +44,12 @@ public class JdbcMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        return jdbcTemplate.update("DELETE FROM meals WHERE id=?", id) != 0;
+        return jdbcTemplate.update("DELETE FROM meals WHERE id=? and user_id=?", id, userId) != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        return DataAccessUtils.singleResult(jdbcTemplate.query("SELECT * FROM meals WHERE id=?", ROW_MAPPER, id));
+        return DataAccessUtils.singleResult(jdbcTemplate.query("SELECT * FROM meals WHERE id=? and user_id=?", ROW_MAPPER, id, userId));
     }
 
     @Override

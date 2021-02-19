@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -36,11 +37,16 @@ public class UserServiceTest {
     @Autowired
     private UserService service;
 
+    @BeforeClass
+    public static void init() {
+        setIgnoringFields("registered", "roles");
+    }
+
     @Test
     public void create() {
-        User created = service.create(getNew());
+        User created = service.create(getNewUser());
         Integer newId = created.getId();
-        User newUser = getNew();
+        User newUser = getNewUser();
         newUser.setId(newId);
         assertMatch(created, newUser);
         assertMatch(service.get(newId), newUser);
@@ -82,9 +88,9 @@ public class UserServiceTest {
 
     @Test
     public void update() {
-        User updated = getUpdated();
+        User updated = getUpdatedUser();
         service.update(updated);
-        assertMatch(service.get(USER_ID), getUpdated());
+        assertMatch(service.get(USER_ID), getUpdatedUser());
     }
 
     @Test
