@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -22,12 +21,12 @@ import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
+        "classpath:spring/spring-app-jdbc.xml",
         "classpath:spring/spring-db.xml"
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class UserServiceTest {
-
     static {
         // Only for postgres driver logging
         // It uses java.util.logging and logged via jul-to-slf4j bridge
@@ -37,16 +36,11 @@ public class UserServiceTest {
     @Autowired
     private UserService service;
 
-    @BeforeClass
-    public static void init() {
-        setIgnoringFields("registered", "roles");
-    }
-
     @Test
     public void create() {
-        User created = service.create(getNewUser());
+        User created = service.create(getNew());
         Integer newId = created.getId();
-        User newUser = getNewUser();
+        User newUser = getNew();
         newUser.setId(newId);
         assertMatch(created, newUser);
         assertMatch(service.get(newId), newUser);
@@ -88,9 +82,9 @@ public class UserServiceTest {
 
     @Test
     public void update() {
-        User updated = getUpdatedUser();
+        User updated = getUpdated();
         service.update(updated);
-        assertMatch(service.get(USER_ID), getUpdatedUser());
+        assertMatch(service.get(USER_ID), getUpdated());
     }
 
     @Test
