@@ -1,7 +1,13 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -13,6 +19,9 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.AbstractMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -26,9 +35,35 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
+    private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
+    private static final Map<String, AbstractMap.SimpleEntry<Long, Long>> testByTimeExecution = new HashMap<>();
 
     @Autowired
     private MealService service;
+
+    @Rule
+    public final TestWatcher watcher = new TestWatcher() {
+        @Override
+        protected void starting(Description description) {
+            testByTimeExecution.put(description.getMethodName(), new AbstractMap.SimpleEntry<>(System.currentTimeMillis(), null));
+        }
+
+        @Override
+        protected void finished(Description description) {
+            testByTimeExecution.computeIfPresent(description.getMethodName(), (n, t) -> {
+                t.setValue(System.currentTimeMillis());
+                log.info("{} milliseconds", t.getValue() - t.getKey());
+                return t;
+            });
+        }
+    };
+
+    @AfterClass
+    public static void reportByTestTimeExecution(){
+        testByTimeExecution.forEach((n, t) -> {
+            if (t.getValue() != null) log.info("{} - {} milliseconds", n, t.getValue() - t.getKey());
+        });
+    }
 
     @Test
     public void delete() {
