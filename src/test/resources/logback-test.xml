@@ -11,6 +11,11 @@
         </encoder>
     </appender>
 
+    <logger name="jdbc.audit" level="OFF"/>
+    <logger name="jdbc.resultset" level="OFF"/>
+    <logger name="jdbc.connection" level="OFF"/>
+    <logger name="jdbc.sqltiming" level="OFF"/>
+
     <logger name="org.postgresql" level="debug"/>
     <logger name="org.springframework.jdbc" level="info"/>
     <logger name="ru.javawebinar.topjava" level="debug"/>

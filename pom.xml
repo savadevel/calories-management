@@ -21,6 +21,7 @@
         <!-- Logging -->
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.30</slf4j.version>
+        <log4jdbc.version>1.16</log4jdbc.version>
 
         <!--DB-->
         <postgresql.version>42.2.18</postgresql.version>
@@ -79,6 +80,13 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bgee.log4jdbc-log4j2</groupId>
+            <artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
+            <version>${log4jdbc.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Spring -->
