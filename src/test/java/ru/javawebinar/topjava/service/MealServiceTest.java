@@ -3,25 +3,26 @@ package ru.javawebinar.topjava.service;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.TransactionSystemException;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.AbstractMap;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -36,33 +37,29 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-    private static final Map<String, AbstractMap.SimpleEntry<Long, Long>> testByTimeExecution = new HashMap<>();
+    private static final Map<String, Long> testByTimeExecution = new ConcurrentHashMap<>();
 
     @Autowired
     private MealService service;
 
     @Rule
-    public final TestWatcher watcher = new TestWatcher() {
+    public final Stopwatch watcher = new Stopwatch() {
         @Override
-        protected void starting(Description description) {
-            testByTimeExecution.put(description.getMethodName(), new AbstractMap.SimpleEntry<>(System.currentTimeMillis(), null));
-        }
-
-        @Override
-        protected void finished(Description description) {
-            testByTimeExecution.computeIfPresent(description.getMethodName(), (n, t) -> {
-                t.setValue(System.currentTimeMillis());
-                log.info("{} milliseconds", t.getValue() - t.getKey());
-                return t;
-            });
+        protected void finished(long nanos, Description description) {
+            testByTimeExecution.put(description.getMethodName(), nanos);
+            log.info("{} mks", nanos / 1000);
         }
     };
 
     @AfterClass
-    public static void reportByTestTimeExecution(){
-        testByTimeExecution.forEach((n, t) -> {
-            if (t.getValue() != null) log.info("{} - {} milliseconds", n, t.getValue() - t.getKey());
-        });
+    public static void reportByTestTimeExecution() {
+        final int maxLength = 3 + testByTimeExecution.keySet().stream()
+                .mapToInt(String::length)
+                .max()
+                .orElse(0);
+        log.info("{}", testByTimeExecution.entrySet().stream()
+                .map(t -> String.format("%s%-" + (maxLength - t.getKey().length()) + "s%d mks", t.getKey(), " ", t.getValue() / 1000))
+                .collect(Collectors.joining("\n", "\n", "\n")));
     }
 
     @Test
@@ -93,7 +90,7 @@ public class MealServiceTest {
 
     @Test
     public void duplicateDateTimeCreate() {
-        assertThrows(DataAccessException.class, () ->
+        assertThrows(DataIntegrityViolationException.class, () ->
                 service.create(new Meal(null, meal1.getDateTime(), "duplicate", 100), USER_ID));
     }
 

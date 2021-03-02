@@ -11,6 +11,8 @@
         </encoder>
     </appender>
 
+    <logger name="org.springframework.orm.jpa.JpaTransactionManager" level="debug"/>
+
     <logger name="jdbc.audit" level="OFF"/>
     <logger name="jdbc.resultset" level="OFF"/>
     <logger name="jdbc.connection" level="OFF"/>
