@@ -14,7 +14,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.TransactionSystemException;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -22,6 +21,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertThrows;
@@ -47,7 +47,7 @@ public class MealServiceTest {
         @Override
         protected void finished(long nanos, Description description) {
             testByTimeExecution.put(description.getMethodName(), nanos);
-            log.info("{} mks", nanos / 1000);
+            log.info("{} ms", TimeUnit.NANOSECONDS.toMillis(nanos));
         }
     };
 
@@ -58,7 +58,8 @@ public class MealServiceTest {
                 .max()
                 .orElse(0);
         log.info("{}", testByTimeExecution.entrySet().stream()
-                .map(t -> String.format("%s%-" + (maxLength - t.getKey().length()) + "s%d mks", t.getKey(), " ", t.getValue() / 1000))
+                .map(t -> String.format("%s%-" + (maxLength - t.getKey().length()) + "s%d ms",
+                        t.getKey(), " ", TimeUnit.NANOSECONDS.toMillis(t.getValue())))
                 .collect(Collectors.joining("\n", "\n", "\n")));
     }
 
