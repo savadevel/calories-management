@@ -29,21 +29,26 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        return crudMealRepository.deleteByIdAndUserId(id, userId) != 0;
+        return crudMealRepository.delete(id, userId) != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        return crudMealRepository.getMealByIdAndUserid(id, userId);
+        return crudMealRepository.get(id, userId);
+    }
+
+    @Override
+    public Meal getWithUser(int id, int userId) {
+        return crudMealRepository.getWithUser(id, userId);
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return crudMealRepository.getMealByUserIdOrderByDateTimeDesc(userId);
+        return crudMealRepository.getAll(userId);
     }
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        return crudMealRepository.getMealByDateTimeGreaterThanEqualAndDateTimeLessThanAndUserId(startDateTime, endDateTime, userId);
+        return crudMealRepository.getBetweenHalfOpen(startDateTime, endDateTime, userId);
     }
 }
