@@ -54,8 +54,7 @@ public class User extends AbstractNamedEntity {
     @Range(min = 10, max = 10000)
     private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id", referencedColumnName="id", insertable = false, updatable = false)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @OrderBy("date_time desc")
     private  List<Meal> meals;
 
@@ -63,16 +62,15 @@ public class User extends AbstractNamedEntity {
     }
 
     public User(User u) {
-        this(u.getId(), u.getMeals(), u.getName(), u.getEmail(), u.getPassword(), u.getCaloriesPerDay(), u.isEnabled(), u.getRegistered(), u.getRoles());
+        this(u.getId(), u.getName(), u.getEmail(), u.getPassword(), u.getCaloriesPerDay(), u.isEnabled(), u.getRegistered(), u.getRoles());
     }
 
-    public User(Integer id, List<Meal> meals, String name, String email, String password, Role role, Role... roles) {
-        this(id, meals, name, email, password, DEFAULT_CALORIES_PER_DAY, true, new Date(), EnumSet.of(role, roles));
+    public User(Integer id, String name, String email, String password, Role role, Role... roles) {
+        this(id, name, email, password, DEFAULT_CALORIES_PER_DAY, true, new Date(), EnumSet.of(role, roles));
     }
 
-    public User(Integer id, List<Meal> meals, String name, String email, String password, int caloriesPerDay, boolean enabled, Date registered, Collection<Role> roles) {
+    public User(Integer id, String name, String email, String password, int caloriesPerDay, boolean enabled, Date registered, Collection<Role> roles) {
         super(id, name);
-        this.meals = meals;
         this.email = email;
         this.password = password;
         this.caloriesPerDay = caloriesPerDay;

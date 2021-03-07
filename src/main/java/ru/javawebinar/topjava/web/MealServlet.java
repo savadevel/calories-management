@@ -29,7 +29,7 @@ public class MealServlet extends HttpServlet {
     public void init() {
         springContext = new GenericXmlApplicationContext();
         ConfigurableEnvironment env = springContext.getEnvironment();
-        env.setActiveProfiles("jpa", "postgres");
+        env.setActiveProfiles(Profiles.JPA, Profiles.POSTGRES_DB);
         springContext.load("spring/spring-app.xml", "spring/spring-db.xml");
         springContext.refresh();
 
@@ -43,7 +43,7 @@ public class MealServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
