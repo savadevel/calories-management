@@ -94,7 +94,39 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void createWithException() throws Exception {
+    public void getUserWithManyRoles() {
+        User user = service.get(ADMIN_ID);
+        USER_MATCHER.assertMatch(user, admin);
+    }
+
+    @Test
+    public void addUserRole() {
+        User updated = new User(user);
+        updated.addRole(Role.USER);
+        updated.addRole(Role.ADMIN);
+        service.update(updated);
+        USER_MATCHER.assertMatch(service.get(updated.id()), updated);
+    }
+
+    @Test
+    public void deleteUserRole() {
+        User updated = new User(admin);
+        updated.deleteRole(Role.USER);
+        service.update(updated);
+        USER_MATCHER.assertMatch(service.get(updated.id()), updated);
+    }
+
+    @Test
+    public void deleteAllUserRoles() {
+        User updated = new User(admin);
+        updated.deleteRole(Role.USER);
+        updated.deleteRole(Role.ADMIN);
+        service.update(updated);
+        USER_MATCHER.assertMatch(service.get(updated.id()), updated);
+    }
+
+    @Test
+    public void createWithException() {
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "  ", "mail@yandex.ru", "password", Role.USER)));
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "  ", "password", Role.USER)));
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "mail@yandex.ru", "  ", Role.USER)));
