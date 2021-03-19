@@ -21,9 +21,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static ru.javawebinar.topjava.repository.jdbc.JdbcUtil.validate;
+
 @Repository
 @Transactional(readOnly = true)
-public class JdbcUserRepository implements UserRepository, ValidateEntity<User> {
+public class JdbcUserRepository implements UserRepository {
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final SimpleJdbcInsert insertUser;
