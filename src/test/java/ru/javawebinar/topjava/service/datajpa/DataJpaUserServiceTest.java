@@ -5,13 +5,13 @@ import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.UserTestData;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.AbstractUserServiceTest;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import static ru.javawebinar.topjava.Profiles.DATAJPA;
-import static ru.javawebinar.topjava.UserTestData.USER_ID;
-import static ru.javawebinar.topjava.UserTestData.USER_MATCHER;
+import static ru.javawebinar.topjava.UserTestData.*;
 
 @ActiveProfiles(DATAJPA)
 public class DataJpaUserServiceTest extends AbstractUserServiceTest {
@@ -26,5 +26,15 @@ public class DataJpaUserServiceTest extends AbstractUserServiceTest {
     public void getWithMealsNotFound() {
         Assert.assertThrows(NotFoundException.class,
                 () -> service.getWithMeals(1));
+    }
+
+    @Test
+    public void getUserWithManyRolesAndMeals() {
+        User updated = new User(user);
+        updated.addRole(Role.ADMIN);
+        service.update(updated);
+        User actual = service.getWithMeals(USER_ID);
+        USER_MATCHER.assertMatch(actual, updated);
+        MealTestData.MEAL_MATCHER.assertMatch(actual.getMeals(), MealTestData.meals);
     }
 }

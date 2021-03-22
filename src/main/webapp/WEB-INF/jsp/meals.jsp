@@ -11,8 +11,7 @@
 
 <section>
     <h2><spring:message code="meal.title"/></h2>
-    <form method="get" action="meals">
-        <input type="hidden" name="filter" value="">
+    <form method="get" action="<spring:url value='/meals/filter'/>">
         <dl>
             <dt><spring:message code="meal.fromDate"/>:</dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
@@ -32,7 +31,7 @@
         <button type="submit"><spring:message code="meal.filter"/></button>
     </form>
     <hr/>
-    <a href="meals?create"><spring:message code="meal.create"/></a>
+    <a href="<spring:url value='/meals/create'/>"><spring:message code="meal.create"/></a>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
@@ -55,8 +54,8 @@
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="meals?update&id=${meal.id}"><spring:message code="meal.update"/></a></td>
-                <td><a href="meals?delete&id=${meal.id}"><spring:message code="meal.delete"/></a></td>
+                <td><a href="<spring:url value='/meals/update/${meal.id}'/>"><spring:message code="meal.update"/></a></td>
+                <td><a href="<spring:url value='/meals/delete/${meal.id}'/>"><spring:message code="meal.delete"/></a></td>
             </tr>
         </c:forEach>
     </table>

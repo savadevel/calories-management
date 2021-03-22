@@ -18,6 +18,8 @@
         <jdbc:script encoding="utf-8" location="classpath:db/populateDB.sql"/>
     </jdbc:initialize-database>
 
+    <tx:annotation-driven/>
+
     <!-- Choose profile from (hsqldb/ postgres) and (jdbc/ datajpa/ jpa) -->
 
     <beans profile="hsqldb">
@@ -55,10 +57,6 @@
     <beans profile="tomcat">
         <jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/topjava"/>
         <context:property-placeholder location="classpath:db/tomcat.properties" system-properties-mode="OVERRIDE"/>
-    </beans>
-
-    <beans profile="jpa,datajpa,jdbc">
-        <tx:annotation-driven/>
     </beans>
 
     <beans profile="jdbc">

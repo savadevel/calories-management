@@ -7,17 +7,13 @@
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
-    <h2>
-        <c:if test='${pageContext.request.getParameter("update") != null}'>
-            <spring:message code='meal.updateForm'/>
-        </c:if>
-        <c:if test='${pageContext.request.getParameter("create") != null}'>
-            <spring:message code='meal.createForm'/>
-        </c:if>
-    </h2>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
-    <form method="post" action="meals">
-        ${pageContext.request.getParameter("create") == null ? '<input type="hidden" name="id" value="'.concat(meal.id).concat('">') : ''}
+    <h2>
+        <c:if test="${meal.id == null}"><spring:message code='meal.createForm'/></c:if>
+        <c:if test="${meal.id != null}"><spring:message code='meal.updateForm'/></c:if>
+    </h2>
+
+    <form method="post" action="<spring:url value='/meals/${meal.id}'/>">
         <dl>
             <dt><spring:message code="meal.date"/>:</dt>
             <dd><input type="datetime-local" value="${meal.dateTime}" name="dateTime" required></dd>

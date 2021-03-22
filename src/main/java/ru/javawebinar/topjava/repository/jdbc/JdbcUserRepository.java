@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-import static ru.javawebinar.topjava.repository.jdbc.JdbcUtil.validate;
+import static ru.javawebinar.topjava.util.ValidationUtil.validateEntity;
 
 @Repository
 @Transactional(readOnly = true)
@@ -46,7 +46,7 @@ public class JdbcUserRepository implements UserRepository {
                         resultSet.getInt("calories_per_day"),
                         resultSet.getBoolean("enabled"),
                         resultSet.getDate("registered"),
-                        new HashSet<>()));
+                        EnumSet.noneOf(Role.class)));
                 if (nameOfRole != null) {
                     result.get(userId).addRole(Role.valueOf(nameOfRole));
                 }
@@ -68,7 +68,7 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     @Transactional
     public User save(User user) {
-        validate(validator, user);
+        validateEntity(validator, user);
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
