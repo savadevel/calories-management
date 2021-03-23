@@ -9,10 +9,8 @@
 <section>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
     <h2>
-        <c:if test="${meal.id == null}"><spring:message code='meal.createForm'/></c:if>
-        <c:if test="${meal.id != null}"><spring:message code='meal.updateForm'/></c:if>
+        <spring:message code="${meal.isNew() ? 'meal.createForm' : 'meal.updateForm'}"/>
     </h2>
-
     <form method="post" action="<spring:url value='/meals/${meal.id}'/>">
         <dl>
             <dt><spring:message code="meal.date"/>:</dt>

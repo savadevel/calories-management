@@ -69,9 +69,6 @@
             <constructor-arg ref="jdbcTemplate"/>
         </bean>
 
-        <bean id="validatorFactory" class="javax.validation.Validation" factory-method="buildDefaultValidatorFactory"/>
-        <bean id="validator" factory-bean="validatorFactory" factory-method="getValidator"/>
-
         <!-- Transaction manager for JDBC -->
         <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
               p:dataSource-ref="dataSource"/>
