@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.web;
 
 import org.assertj.core.matcher.AssertionMatcher;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -78,7 +77,7 @@ class RootControllerTest extends AbstractControllerTest {
         perform(get("/resources/css/style.css"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("text/css;charset=UTF-8"));
+                .andExpect(content().contentTypeCompatibleWith("text/css"));
     }
 
 }
