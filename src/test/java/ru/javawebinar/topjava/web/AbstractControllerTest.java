@@ -13,6 +13,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import ru.javawebinar.topjava.AllActiveProfileResolver;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 
 @SpringJUnitWebConfig(locations = {
         "classpath:spring/spring-app.xml",
@@ -47,5 +48,9 @@ public abstract class AbstractControllerTest {
 
     protected ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return mockMvc.perform(builder);
+    }
+
+    protected boolean isSetProfile(String nameProfile) {
+        return Arrays.asList(webApplicationContext.getEnvironment().getActiveProfiles()).contains(nameProfile);
     }
 }

@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.web.meal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
@@ -17,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 class MealRestControllerTest extends AbstractControllerTest {
@@ -53,15 +55,17 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void create() throws Exception {
-        Meal meal = getNew();
-        perform(MockMvcRequestBuilders.post(REST_URL + "create").contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(meal)))
+    void createWithLocation() throws Exception {
+        Meal newMeal = getNew();
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + "create").contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(newMeal)))
                 .andDo(print())
-                .andDo(result -> meal.setId(JsonUtil.readValue(result.getResponse().getContentAsString(), Meal.class).id()))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_MATCHER.contentJson(meal));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        Meal created = readFromJson(action, Meal.class);
+        newMeal.setId(created.id());
+        MEAL_MATCHER.assertMatch(created, newMeal);
+        MEAL_MATCHER.assertMatch(mealService.get(newMeal.id(), SecurityUtil.authUserId()), newMeal);
     }
 
     @Test
@@ -69,11 +73,11 @@ class MealRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + "filter")
                 .param("startDate", "2020-01-30")
                 .param("endDate", "2020-01-30")
-                .param("startTime", "00:00:00")
+                .param("startTime", "15:00:00")
                 .param("endDate", "23:00:00"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEAL_TO_MATCHER.contentJson(MealsUtil.getTos(List.of(meal3, meal2, meal1), SecurityUtil.authUserCaloriesPerDay())));
+                .andExpect(MEAL_TO_MATCHER.contentJson(MealsUtil.getTos(List.of(meal3), SecurityUtil.authUserCaloriesPerDay())));
     }
 }
