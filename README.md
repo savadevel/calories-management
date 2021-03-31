@@ -18,16 +18,16 @@ curl -X GET -i "http://localhost:8080/topjava/rest/meals/filter?startDate=2020-0
 ### Creat meal
 If curl query right then return new meal (json format) and HTTP code is 201
 ```bash
-curl -i -X POST -H "Content-Type: application/json" -d "{\"dateTime\":\"2021-02-02T10:00:00\",\"description\":\"description of new meal\",\"calories\":1000}" http://localhost:8080/topjava/rest/meals/create
+curl -i -X POST -H "Content-Type: application/json" -d "{\"dateTime\":\"2021-02-02T10:00:00\",\"description\":\"description of new meal\",\"calories\":1000}" http://localhost:8080/topjava/rest/meals
 ```
 ### Update meal
 If curl query right then return new meal (json format) and HTTP code is 204
 ```bash
-curl -i -X PUT -H "Content-Type: application/json" -d "{\"id\":100013,\"dateTime\":\"2021-02-02T10:00:00\",\"description\":\"description of updated meal\",\"calories\":1000}" http://localhost:8080/topjava/rest/meals/update/100013
+curl -i -X PUT -H "Content-Type: application/json" -d "{\"id\":100013,\"dateTime\":\"2021-02-02T10:00:00\",\"description\":\"description of updated meal\",\"calories\":1000}" http://localhost:8080/topjava/rest/meals/100013
 ```
 ### Delete meal by ID 
 If curl query right then return only HTTP code is 204, no any data
 ```bash
-curl -X DELETE -i http://localhost:8080/topjava/rest/meals/delete/{ID}
+curl -X DELETE -i http://localhost:8080/topjava/rest/meals/{ID}
 ```
 
