@@ -44,4 +44,25 @@ $(function () {
             ]
         })
     );
+
+    ctx.datatableApi.on("change", "input", function() {
+        const row = $(this).closest('tr');
+        const userId = row.attr('id');
+        const enabled = $(this).prop('checked');
+        $.ajax({
+            method: "POST",
+            url: ctx.ajaxUrl + userId,
+            data: "enabled=" + enabled,
+            success : function () {
+                row.attr("data-enabled", enabled);
+                successNoty(enabled ? "Active" : "Disactive");
+            }
+        });
+    });
 });
+
+function updateTable() {
+    $.get(ctx.ajaxUrl, function (data) {
+        ctx.datatableApi.clear().rows.add(data).draw();
+    });
+}
