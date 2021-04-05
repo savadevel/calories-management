@@ -73,3 +73,7 @@ function failNoty(jqXHR) {
         layout: "bottomRight"
     }).show();
 }
+
+function datatableDraw(data) {
+    ctx.datatableApi.clear().rows.add(data).draw();
+}

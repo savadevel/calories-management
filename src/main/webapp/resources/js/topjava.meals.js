@@ -36,7 +36,7 @@ $(function () {
             "order": [
                 [
                     0,
-                    "asc"
+                    "desc"
                 ]
             ]
         })
@@ -48,9 +48,7 @@ function updateTable() {
         method: "GET",
         url: ctx.ajaxUrl + "filter",
         data: filterForm.serialize(),
-        success : function (data) {
-            ctx.datatableApi.clear().rows.add(data).draw();
-        }
+        success : datatableDraw
     });
 }
 
