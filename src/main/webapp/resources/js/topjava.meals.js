@@ -20,33 +20,50 @@ function clearFilter() {
 $(function () {
     makeEditable(
         $("#datatable").DataTable({
-            "paging": false,
-            "info": true,
-            "columns": [
+            ajax: {
+                url: ctx.ajaxUrl,
+                dataSrc: ''
+            },
+            paging: false,
+            info: true,
+            columns: [
                 {
-                    "data": "dateTime"
+                    data: "dateTime",
+                    render: function (data, type) {
+                        if (type === 'display') {
+                            const dateTime = new Date(data).toISOString().substring(0, 16).replace("T", " ");
+                            return '<span>' + dateTime + '</span>';
+                        }
+                        return data;
+                    }
                 },
                 {
-                    "data": "description"
+                    data: "description"
                 },
                 {
-                    "data": "calories"
+                    data: "calories"
                 },
                 {
-                    "defaultContent": "Edit",
-                    "orderable": false
+                    defaultContent: "Edit",
+                    orderable: false,
+                    render: renderEditBtn
+
                 },
                 {
-                    "defaultContent": "Delete",
-                    "orderable": false
+                    defaultContent: "Delete",
+                    orderable: false,
+                    render: renderDeleteBtn
                 }
             ],
-            "order": [
+            order: [
                 [
                     0,
                     "desc"
                 ]
-            ]
+            ],
+            createdRow: function (row, data) {
+                $(row).attr("data-mealExcess", data.excess);
+            }
         })
     );
 });
