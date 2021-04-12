@@ -12,12 +12,34 @@ const ctx = {
     }
 }
 
+$(document).on("ajaxSend", function(event, jqxhr, settings) {
+    if (settings.url === mealAjaxUrl &&  settings.type === "POST") {
+        const dateTime = $("#dateTime").val();
+        $("#dateTime").val(dateTime.replace(/\s+/, "T"));
+        settings.data = $('#detailsForm').serialize();
+        $("#dateTime").val(dateTime);
+    }
+}).on("ajaxSuccess", function(event, jqxhr, settings){
+    if (jqxhr.hasOwnProperty("responseJSON") && jqxhr.responseJSON.hasOwnProperty("dateTime")) {
+        $("#dateTime").val(convertDateTimeFromIsoToUi(jqxhr.responseJSON.dateTime));
+    }
+
+});
+
 function clearFilter() {
     $("#filter")[0].reset();
     $.get("profile/meals/", updateTableByData);
 }
 
 $(function () {
+    setDateFormat("#startDate");
+    setDateFormat("#endDate");
+
+    setTimeFormat("#startTime");
+    setTimeFormat("#endTime");
+
+    setDateTimeFormat("#dateTime");
+
     makeEditable(
         $("#datatable").DataTable({
             ajax: {
@@ -31,8 +53,7 @@ $(function () {
                     data: "dateTime",
                     render: function (data, type) {
                         if (type === 'display') {
-                            const dateTime = new Date(data).toISOString().substring(0, 16).replace("T", " ");
-                            return '<span>' + dateTime + '</span>';
+                            return '<span>' + convertDateTimeFromIsoToUi(data) + '</span>';
                         }
                         return data;
                     }
@@ -67,3 +88,19 @@ $(function () {
         })
     );
 });
+
+function setTimeFormat(id) {
+    $(id).datetimepicker({datepicker:false, format:"H:i"});
+}
+
+function setDateFormat(id) {
+    $(id).datetimepicker({timepicker:false, format:"Y-m-d"});
+}
+
+function setDateTimeFormat(id) {
+    $(id).datetimepicker({format:"Y-m-d H:i"});
+}
+
+function convertDateTimeFromIsoToUi(dateTime) {
+    return dateTime.substring(0, 16).replace("T", " ");
+}
