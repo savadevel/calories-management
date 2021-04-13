@@ -12,14 +12,15 @@ const ctx = {
     }
 }
 
-$(document).on("ajaxSend", function(event, jqxhr, settings) {
-    if (settings.url === mealAjaxUrl &&  settings.type === "POST") {
-        const dateTime = $("#dateTime").val();
-        $("#dateTime").val(dateTime.replace(/\s+/, "T"));
+$(document).on("ajaxSend", function (event, jqxhr, settings) {
+    if (settings.url === mealAjaxUrl && settings.type === "POST") {
+        const controlDateTime = $("#dateTime")
+        const dateTime = controlDateTime.val();
+        controlDateTime.val(dateTime.replace(/\s+/, "T"));
         settings.data = $('#detailsForm').serialize();
-        $("#dateTime").val(dateTime);
+        controlDateTime.val(dateTime);
     }
-}).on("ajaxSuccess", function(event, jqxhr, settings){
+}).on("ajaxSuccess", function (event, jqxhr, settings) {
     if (jqxhr.hasOwnProperty("responseJSON") && jqxhr.responseJSON.hasOwnProperty("dateTime")) {
         $("#dateTime").val(convertDateTimeFromIsoToUi(jqxhr.responseJSON.dateTime));
     }
@@ -32,12 +33,8 @@ function clearFilter() {
 }
 
 $(function () {
-    setDateFormat("#startDate");
-    setDateFormat("#endDate");
-
-    setTimeFormat("#startTime");
-    setTimeFormat("#endTime");
-
+    setDateRange("#startDate", "#endDate");
+    setTimeRange("#startTime", "#endTime");
     setDateTimeFormat("#dateTime");
 
     makeEditable(
@@ -89,16 +86,41 @@ $(function () {
     );
 });
 
+function setDateRange(startId, endId) {
+    setDateFormat(startId);
+    setDateFormat(endId);
+    setLimit(startId, endId, "maxDate");
+    setLimit(endId, startId, "minDate");
+}
+
+function setTimeRange(startId, endId) {
+    setTimeFormat(startId);
+    setTimeFormat(endId);
+    setLimit(startId, endId, "maxTime");
+    setLimit(endId, startId, "minTime");
+}
+
+function setLimit(startId, endId, limit) {
+    $(startId).datetimepicker({
+        onShow: function () {
+            this.setOptions({
+                [limit]: $(endId).val() ? $(endId).val() : false
+            });
+        }
+    });
+
+}
+
 function setTimeFormat(id) {
-    $(id).datetimepicker({datepicker:false, format:"H:i"});
+    $(id).datetimepicker({datepicker: false, format: "H:i"});
 }
 
 function setDateFormat(id) {
-    $(id).datetimepicker({timepicker:false, format:"Y-m-d"});
+    $(id).datetimepicker({timepicker: false, format: "Y-m-d"});
 }
 
 function setDateTimeFormat(id) {
-    $(id).datetimepicker({format:"Y-m-d H:i"});
+    $(id).datetimepicker({format: "Y-m-d H:i"});
 }
 
 function convertDateTimeFromIsoToUi(dateTime) {

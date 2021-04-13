@@ -33,17 +33,17 @@ public class Meal extends AbstractBaseEntity {
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Column(name = "date_time", nullable = false)
-    @NotNull
+    @NotNull(message= "{NotEmpty.meal.title}")
     private LocalDateTime dateTime;
 
     @Column(name = "description", nullable = false)
-    @NotBlank
+    @NotBlank(message= "{NotEmpty.meal.title}")
     @Size(min = 2, max = 120)
     private String description;
 
     @Column(name = "calories", nullable = false)
     @Range(min = 10, max = 5000)
-    @NotNull(message= "calories may not be empty")
+    @NotNull(message= "{NotEmpty.meal.title}")
     private Integer calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
