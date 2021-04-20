@@ -9,13 +9,13 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
-import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javawebinar.topjava.ErrorInfoTestData.*;
 import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.*;
@@ -92,7 +92,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
-                .content(JsonUtil.writeValue(updated)))
+                .content(jsonWithPassword(updated, updated.getPassword())))
                 .andExpect(status().isNoContent());
 
         USER_MATCHER.assertMatch(userService.get(USER_ID), getUpdated());
@@ -112,6 +112,62 @@ class AdminRestControllerTest extends AbstractControllerTest {
         newUser.setId(newId);
         USER_MATCHER.assertMatch(created, newUser);
         USER_MATCHER.assertMatch(userService.get(newId), newUser);
+    }
+
+    @Test
+    void createWithInvalidEmail() throws Exception {
+        User newUser = getNew();
+        newUser.setEmail("");
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonWithPassword(newUser, "newPass"))
+                .with(userHttpBasic(admin)))
+                .andExpect(status().isUnprocessableEntity())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(ERROR_INFO_MATCHER.contentJson(enErrorInfoByCreateUserWithInvalidEmail));
+    }
+
+    @Test
+    void updateWithInvalidEmail() throws Exception {
+        User updated = getUpdated();
+        updated.setEmail("");
+        perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonWithPassword(updated, updated.getPassword()))
+                .with(userHttpBasic(admin)))
+                .andExpect(status().isUnprocessableEntity())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(ERROR_INFO_MATCHER.contentJson(enErrorInfoByUpdateUserWithInvalidEmail));
+    }
+
+    @Test
+    void createWithExistsEmail() throws Exception {
+        User newUser = getNew();
+        newUser.setEmail(admin.getEmail());
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonWithPassword(newUser, "newPass"))
+                .with(userHttpBasic(admin)))
+                .andExpect(status().isUnprocessableEntity())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(ERROR_INFO_MATCHER.contentJson(enErrorInfoByCreateUserWithExistsEmail));
+    }
+
+    @Test
+    void updateWithExistsEmail() throws Exception {
+        User updated = getUpdated();
+        updated.setEmail(admin.getEmail());
+        perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonWithPassword(updated, updated.getPassword()))
+                .with(userHttpBasic(admin)))
+                .andExpect(status().isUnprocessableEntity())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(ERROR_INFO_MATCHER.contentJson(enErrorInfoByUpdateUserWithExistsEmail));
     }
 
     @Test
