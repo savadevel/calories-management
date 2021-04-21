@@ -13,6 +13,8 @@ public class ErrorInfoTestData {
 
     public static final ErrorInfo enErrorInfoByCreateMealWithInvalidCalories = new ErrorInfo("http://localhost/rest/profile/meals/", ErrorType.VALIDATION_ERROR, List.of("[calories] must be between 10 and 5000"));
     public static final ErrorInfo enErrorInfoByUpdateMealWithInvalidCalories = new ErrorInfo("http://localhost/rest/profile/meals/" + MEAL1_ID, ErrorType.VALIDATION_ERROR, List.of("[calories] must be between 10 and 5000"));
+    public static final ErrorInfo enErrorInfoByCreateMealWithExistsDateTime = new ErrorInfo("http://localhost/rest/profile/meals/", ErrorType.VALIDATION_ERROR, List.of("[dateTime] You already have meal with this date/time"));
+    public static final ErrorInfo enErrorInfoByUpdateMealWithExistsDateTime = new ErrorInfo("http://localhost/rest/profile/meals/" + MEAL1_ID, ErrorType.VALIDATION_ERROR, List.of("[dateTime] You already have meal with this date/time"));
 
     public static final ErrorInfo enErrorInfoByCreateUserWithInvalidEmail = new ErrorInfo("http://localhost/rest/admin/users/", ErrorType.VALIDATION_ERROR, List.of("[email] must not be blank"));
     public static final ErrorInfo enErrorInfoByUpdateUserWithInvalidEmail = new ErrorInfo("http://localhost/rest/admin/users/" + USER_ID, ErrorType.VALIDATION_ERROR, List.of("[email] must not be blank"));
