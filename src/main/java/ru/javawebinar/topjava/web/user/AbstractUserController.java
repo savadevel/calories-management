@@ -26,7 +26,7 @@ public abstract class AbstractUserController {
 
     @InitBinder
     private void initBinder(WebDataBinder binder) {
-        binder.setValidator(userValidator);
+        binder.addValidators(userValidator);
     }
 
     public List<User> getAll() {

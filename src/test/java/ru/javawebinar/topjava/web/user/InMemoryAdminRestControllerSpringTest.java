@@ -11,7 +11,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import static ru.javawebinar.topjava.UserTestData.NOT_FOUND;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
-@SpringJUnitConfig(locations = {"classpath:spring/inmemory.xml"})
+@SpringJUnitConfig(locations = {"classpath:spring/inmemory.xml", "classpath:spring/spring-mvc.xml"})
 class InMemoryAdminRestControllerSpringTest {
 
     @Autowired

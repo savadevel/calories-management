@@ -30,7 +30,7 @@ public abstract class AbstractMealController {
 
     @InitBinder
     private void initBinder(WebDataBinder binder) {
-        binder.setValidator(mealValidator);
+        binder.addValidators(mealValidator);
     }
 
     public Meal get(int id) {
