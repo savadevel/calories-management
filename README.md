@@ -1,4 +1,5 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/83a0e63cda3e466c92466dd4f3276f29)](https://www.codacy.com/gh/savadevel/calories-management/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=savadevel/calories-management&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.com/savadevel/calories-management.svg?branch=master)](https://travis-ci.com/savadevel/calories-management)
 
 Онлайн стажировка (Topjava): Java Enterprise Online Project 
 ===============================
